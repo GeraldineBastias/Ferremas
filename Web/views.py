@@ -1,6 +1,6 @@
 from email import message
 from django.shortcuts import render, redirect
-from .models import Usuario, RolUsuario, Producto
+from .models import Usuario, Tipo_Usuario,Categoria,Tipo_producto,Producto,Serie,Carrito,Boleta,Producto_Comprado
 from django.contrib import messages
 
 # Create your views here.
@@ -104,8 +104,21 @@ def Listar_Usuario(request):
 #-----------------------------------------------------------------------------
 
 
+#--------------------CARRITO DE COMPRA------------------------------------
 
-
+def carrito(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    carrito = Carrito.objects.all()
+    contexto = {
+        "sesion":sesion,
+        "usuario":x,
+        "lista_v":carrito
+    }
+    return render(request, 'core/a_VistaCliente/carrito.html',contexto)
 
 
 
