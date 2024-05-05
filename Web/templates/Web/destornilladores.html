@@ -1,21 +1,28 @@
 <!DOCTYPE html>
+{% load static %}
 <html lang="en">
 
 <head>
     <title>Ferremas - Martillos</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="apple-touch-icon" href="{% static 'Web/img/apple-icon.png' %}">
+    <!--Icono de la pagina-->
+    <link rel="shortcut icon"  type="image/x-icon"  href="{% static 'Web/img/construccion.png' %}">
 
-    <link rel="apple-touch-icon" href="assets/img/apple-icon.png">
-    <link rel="shortcut icon" type="image/x-icon" href="assets/img/construccion.png">
+    <!-- Core Stylesheet -->
+    <link href="{% static 'Web/css/custom.css' %}" rel="stylesheet">
+    <link href="{% static 'Web/css/templatemo.css' %}" rel="stylesheet">
+    <link href="{% static 'Web/css/bootstrap.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Web/css/fontawesome.min.css' %}" rel="stylesheet">
 
-    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
-    <link rel="stylesheet" href="assets/css/templatemo.css">
-    <link rel="stylesheet" href="assets/css/custom.css">
+    <!-- CSS only -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
-    <!-- Load fonts style after rendering the layout styles -->
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@100;200;300;400;500;700;900&display=swap">
-    <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+
+    <!-- Slick -->
+    <link href="{% static 'Web/css/slick.min.css' %}" rel="stylesheet">
+    <link href="{% static 'Web/css/slick-theme.css' %}" rel="stylesheet">
 
 </head>
 
@@ -24,7 +31,7 @@
     <nav class="navbar navbar-expand-lg navbar-light shadow">
         <div class="container d-flex justify-content-between align-items-center">
 
-            <a class="navbar-brand text-success logo h1 align-self-center" href="index.html">
+            <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'index.html %}" >
                 Ferremas
             </a>
 
@@ -36,16 +43,16 @@
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="index.html">Inicio</a>
+                            <a class="nav-link" href="{% url 'index' %}">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="shop.html">Tienda</a>
+                            <a class="nav-link" href="{% url 'shop' %}">Tienda</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="about.html">Sobre Nosotros</a>
+                            <a class="nav-link" href="{% url 'about' %}">Sobre Nosotros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="contact.html">Contacto</a>
+                            <a class="nav-link" href="{% url 'contact' %}">Contacto</a>
                         </li>
                     </ul>
                 </div>
@@ -77,8 +84,8 @@
                             <i class="fa fa-fw fa-chevron-circle-down mt-1"></i>
                         </a>
                         <ul class="collapse show list-unstyled pl-3">
-                            <li><a class="text-decoration-none" href="martillos.html">Martillos</a></li>
-                            <li><a class="text-decoration-none" href="destornilladores.html">Destornilladores</a></li>
+                            <li><a class="text-decoration-none" href="{% url 'martillos' %}">Martillos</a></li>
+                            <li><a class="text-decoration-none" href="{% url 'destornilladores' %}">Destornilladores</a></li>
                         </ul>
                     </li>
                     <li class="pb-3">
@@ -87,7 +94,7 @@
                             <i class="pull-right fa fa-fw fa-chevron-circle-down mt-1"></i>
                         </a>
                         <ul id="collapseTwo" class="collapse list-unstyled pl-3">
-                            <li><a class="text-decoration-none" href="pinturas.html">Pinturas</a></li>
+                            <li><a class="text-decoration-none" href="{% url 'pinturas' %}">Pinturas</a></li>
                         </ul>
                     </li>
                 </ul>
@@ -98,16 +105,16 @@
                     <div class="col-md-4">
                         <div class="card mb-4 product-wap rounded-0">
                             <div class="card rounded-0">
-                                <img class="card-img rounded-0 img-fluid" src="assets/img/530.jpg">
+                                <img class="card-img rounded-0 img-fluid" src="{% static 'Web/img/530.jpg' %}">
                                 <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                     <ul class="list-unstyled">
-                                        <li><a class="btn btn-success text-white mt-2" href="destornilla_1.html"><i class="far fa-eye"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2" href="destornilla_1.html"><i class="fas fa-cart-plus"></i></a></li>
+                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'destornilla_1' %}"><i class="far fa-eye"></i></a></li>
+                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'destornilla_1' %}"><i class="fas fa-cart-plus"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <a href="destornilla_1.html" class="h3 text-decoration-none">Destornillador philips 6x150mm</a>
+                                <a href="{% url 'destornilla_1' %}" class="h3 text-decoration-none">Destornillador philips 6x150mm</a>
                                 <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
                                     <li class="pt-2">
                                         <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
@@ -125,16 +132,16 @@
                     <div class="col-md-4">
                         <div class="card mb-4 product-wap rounded-0">
                             <div class="card rounded-0">
-                                <img class="card-img rounded-0 img-fluid" src="assets/img/540.jpg">
+                                <img class="card-img rounded-0 img-fluid" src="{% static 'Web/img/540.jpg' %}">
                                 <div class="card-img-overlay rounded-0 product-overlay d-flex align-items-center justify-content-center">
                                     <ul class="list-unstyled">
-                                        <li><a class="btn btn-success text-white mt-2" href="destornilla_2.html"><i class="far fa-eye"></i></a></li>
-                                        <li><a class="btn btn-success text-white mt-2" href="destornilla_2.html"><i class="fas fa-cart-plus"></i></a></li>
+                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'destornilla_2' %}"><i class="far fa-eye"></i></a></li>
+                                        <li><a class="btn btn-success text-white mt-2" href="{% url 'destornilla_2' %}"><i class="fas fa-cart-plus"></i></a></li>
                                     </ul>
                                 </div>
                             </div>
                             <div class="card-body">
-                                <a href="destornilla_2.html" class="h3 text-decoration-none">Destornillador philips 8x200mm</a>
+                                <a href="{% url 'destornilla_2' %}" class="h3 text-decoration-none">Destornillador philips 8x200mm</a>
                                 <ul class="w-100 list-unstyled d-flex justify-content-between mb-0">
                                     <li class="pt-2">
                                         <span class="product-color-dot color-dot-red float-left rounded-circle ml-1"></span>
