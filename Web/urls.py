@@ -1,7 +1,7 @@
 from unicodedata import name
 from django.urls import URLPattern, path
 from . import views
-from .views import  index,about, contact, destornilla_1,destornilla_2, martillo_1,martillo_2, martillos, pintura_1,pintura_2,pinturas, shop
+from .views import  index,about, contact, destornilla_1,destornilla_2, martillo_1,martillo_2, martillos, pintura_1,pintura_2,pinturas, shop,destornilladores
 from django.contrib.auth.views import LoginView, LogoutView
 
 urlpatterns = [
@@ -10,6 +10,7 @@ urlpatterns = [
     path('contact',contact,name="contact"),
     path('destornilla_1',destornilla_1,name="destornilla_1"),
     path('destornilla_2',destornilla_2,name="destornilla_2"),
+    path('destornilladores',destornilladores,name="destornilladores"),
     path('martillo_1',martillo_1,name="martillo_1"),
     path('martillo_2',martillo_2,name="martillo_2"),
     path('martillos',martillos,name="martillos"),
