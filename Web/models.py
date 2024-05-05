@@ -1,11 +1,10 @@
-from logging import PlaceHolder
 from django.db import models
 
 # Create your models here.
 
 class Tipo_Usuario(models.Model):
     id_tipo_user = models.AutoField(primary_key=True)
-    descripcion = models.CharField(max_length=60, null=False, blank=False)
+    nombre_Tipo = models.CharField(max_length=60, null=False, blank=False)
 
     def __str__(self) :
             return self.descripcion
@@ -15,8 +14,6 @@ class Usuario(models.Model):
     email = models.CharField(max_length=50, blank=False, null=False)
     password = models.CharField(max_length=50, null=False, blank=False)
     nombre = models.CharField(max_length=50, blank=False, null=False)
-    telefono = models.IntegerField(null=False, blank=False)
-    direccion_user = models.CharField(max_length=70, blank=False, null=False)
     foto = models.ImageField(upload_to="foto_perfil", default="../../static/core/img/defaultuser.png", blank='')
     id_tipo_user = models.ForeignKey(Tipo_Usuario, on_delete= models.CASCADE, default=1)
 
@@ -31,39 +28,23 @@ class Categoria(models.Model):
     def __str__(self) :
             return self.descripcion
     
-class Tipo_producto(models.Model):
-    id_tipo_producto = models.AutoField(primary_key=True)
-    descripcion = models.CharField(max_length=60, null=False, blank=False)
-    imagen = models.ImageField(upload_to="foto_producto", default="../../static/core/img/defaultuser.png", blank='')
-    id_categoria = models.ForeignKey(Categoria, on_delete= models.CASCADE)
-
-    def __str__(self) :
-            return self.descripcion
-    
 class Producto(models.Model):
     id_producto = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=60, null=False, blank=False)
     nombre = models.CharField(max_length=60, null=False, blank=False)
     marca = models.CharField(max_length=60, null=False, blank=False)
+    valor = models.IntegerField(null=False, blank=False)
     imagen = models.ImageField(upload_to="foto_producto", default="../../static/core/img/defaultuser.png", blank='')
-    id_tipo_producto = models.ForeignKey(Tipo_producto, on_delete= models.CASCADE)
+    id_Categoria = models.ForeignKey(Categoria, on_delete= models.CASCADE)
 
     def __str__(self) :
             return self.nombre
 
-class Serie(models.Model):
-    id_serie = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=60, null=False, blank=False)
-    fecha = models.DateField(null=False, blank=False)
-    valor = models.IntegerField(null=False, blank=False)
-    imagen = models.ImageField(upload_to="foto_producto", default="../../static/core/img/defaultuser.png", blank='')
-    id_producto = models.ForeignKey(Producto, on_delete= models.CASCADE)
-    
 class Carrito(models.Model): 
     id_carrito = models.AutoField(primary_key=True)
     cantidad = models.IntegerField(null=False, blank=False)
     id_user = models.ForeignKey(Usuario, on_delete= models.CASCADE)
-    id_serie = models.ForeignKey(Serie, on_delete= models.CASCADE)
+    id_producto = models.ForeignKey(Producto, on_delete= models.CASCADE)
    
 
 class Boleta(models.Model): 
@@ -84,4 +65,3 @@ class Producto_Comprado(models.Model):
 
 
 
-    

@@ -1,65 +1,248 @@
-from email import message
 from django.shortcuts import render, redirect
-from .models import Usuario, Tipo_Usuario,Categoria,Tipo_producto,Producto,Serie,Carrito,Boleta,Producto_Comprado
+from django.contrib.auth import authenticate, login
+from .models import Usuario, Tipo_Usuario, Categoria,Producto,Carrito
 from django.contrib import messages
+import base64
+from random import randint
+import transbank
+from transbank.webpay.webpay_plus.transaction import Transaction
 
 # Create your views here.
 
-def index(request):
-    return render(request,'Web/index.html')
+#------------------------API DE WEBPAY-------------------------------
 
-def contact(request):
-    return render(request,'Web/contact.html')
+def webpay(request,sesion,monto,idcar):
 
-def destornilla_1(request):
-    return render(request,'Web/destornilla_1.html')
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    y = Carrito.objects.get(id_carrito = idcar)
 
-def destornilla_2(request):
-    return render(request,'Web/destornilla_2.html')
+    Monto = monto * y.cantidad
+    #crea la transaccion
+    idcarstr = str(idcar)
+    resp = (Transaction()).create(str(randint(10,100000)), str(randint(10,100000)), float(Monto), "http://localhost:8000/transaccioncompleta/"+sesion+"/"+idcarstr)
 
-def destornilladores(request):
-    return render(request,'Web/destornilladores.html')
+    contexto = {
+        "sesion":sesion,
+        "usuario":x,
+        "token":resp['token'],
+        "url":resp['url'],
+        "carrito":y
+    }
+    #redirige a confirmar pago donde evia el monto a pagar tambien la url y el token devuelto por parte de transbank
+    return render(request, "core/a_VistaCliente/payment.html",contexto)
 
-def martillo_1(request):
-    return render(request,'Web/martillo_1.html')
+#-----------------------------------------------------------------------------
 
-def martillo_2(request):
-    return render(request,'Web/martillo_2.html')
+def transaccioncompleta(request,sesion,idcar):
+    token = request.GET.get('token_ws')
+    y = Carrito.objects.get(id_carrito = idcar)
+    if token:
+        transaction = Transaction()
+        response = transaction.commit(token=token)
 
-def martillos(request):
-    return render(request,'Web/martillos.html')
+        amount= response['amount']
+        status = response['status']
+        buy_order= response['buy_order']
+        transaction_date = response['transaction_date']
+        authorization_code = response['authorization_code']
 
-def pintura_1(request):
-    return render(request,'Web/pintura_1.html')
+        contexto = {
+        'amount':amount,
+        'status':status,
+        'buy_order':buy_order,
+        'transaction_date':transaction_date,
+        'authorization_code':authorization_code,
+        'sesion':sesion,
+        'carrito':y
+    }
+    return render(request, "core/a_VistaCliente/PagoCorrecto.html",contexto)
 
-def pintura_2(request):
-    return render(request,'Web/pintura_2.html')
+#-----------------------------------------------------------------------------
 
-def pinturas(request):
-    return render(request,'Web/pinturas.html')
+def PagoCorrecto(request):
+    
+    return render(request, 'core/a_VistaCliente/PagoCorrecto.html')
 
-def shop(request):
-    return render(request,'Web/shop.html')
+#-----------------------------------------------------------------------------
 
-def about(request):
-    return render(request,'Web/about.html')
+def payment(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request, 'core/payment.html',contexto)
+
+#-----------------------------------------------------------------------------
+
+def login(request):
+    return render(request,'Web/login.html')
+
+def index(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/index.html',contexto)
+
+def contact(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/contact.html',contexto)
+
+def destornilla_1(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/destornilla_1.html',contexto)
+
+def destornilla_2(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/destornilla_2.html',contexto)
+
+def destornilladores(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/destornilladores.html',contexto)
+
+def martillo_1(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/martillo_1.html',contexto)
+
+def martillo_2(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/martillo_2.html',contexto)
+
+def martillos(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/martillos.html',contexto)
+
+def pintura_1(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/pintura_1.html',contexto)
+
+def pintura_2(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/pintura_2.html',contexto)
+
+def pinturas(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/pinturas.html',contexto)
+
+def shop(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/shop.html',contexto)
+
+def about(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    return render(request,'Web/about.html',contexto)
 
 #------------- FUNCIONES LOGIN Y DEMÁS ----------------
-def login_app(request):
-    us = request.POST['nomUser']
-    cl = request.POST['pass']
-    try:
-        if us == 'admin' and cl == 'admin':
-            return redirect ('Vista_Admin')
-        elif us == 'usuario' and cl == 'usuario':
-            return redirect ('Vista_Usuario')
-        else:
-            return redirect ('index')
-
-    except Usuario.DoesNotExist:
-        # messages.error(request, 'Usuario y/o clave incorrecta')
-        return redirect ('index')
-    
 
 #-----------------------------------------------------------------------------
 def registrarUsuario(request):
@@ -120,10 +303,282 @@ def carrito(request,sesion):
     }
     return render(request, 'core/a_VistaCliente/carrito.html',contexto)
 
+#-----------------------------------------------------------------------------
+
+def agregarCarrito(request,sesion,serie):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    y = Serie.objects.get(id_serie = serie)
+    cantidad1     = request.POST['cantidad']
+    cantidad2     = request.POST['divStoc']
+
+    if cantidad1 <= cantidad2:
+        try:
+            Carrito.objects.get(id_serie=y, id_user =x)
+            return redirect('detalleProducto',sesion,serie)
+        except:
+            canti = cantidad1
+
+            Carrito.objects.create(
+            cantidad = canti,       
+            id_user = x,
+            id_serie =  y
+            )
+            return redirect('carrito',sesion)
+    else:
+        return redirect('detalleProducto',sesion,serie)
+    
+#-----------------------------------------------------------------------------
+
+def eliminarCarrito(request,sesion,id):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    carrito = Carrito.objects.get(id_carrito = id)
+    carrito.delete() #Elimina registro
+    contexto = {
+        "sesion":sesion,
+        "usuario":x,
+    }
+    return redirect('carrito',sesion)
+
+#-----------------------------------------------------------------------------
+
+def eliminarproducto(request,sesion,id):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    producto = Producto.objects.get(id_producto = id)
+    producto.delete() #Elimina registro
+    return redirect('gestionCategoria',sesion)
+
+#-----------------------------------------------------------------------------
+
+def registrarProducto(request,sesion):
+    codigo1              = request.POST['codigo']
+    nombre1              = request.POST['nombre']
+    marca1               = request.POST['marca']
+    valor1               = request.POST['valor']
+    id_categoria1        = request.POST['id_categoria']
+
+    id_categoria2 = Categoria.objects.get(id_categoria = id_categoria1)
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    try:
+        imagen1          = request.FILES['imagen']
+        Producto.objects.create(
+            codigo = codigo1,       
+            nombre = nombre1,
+            marca = marca1,
+            valor = valor1,
+            id_categoria = id_categoria2,
+            imagen = imagen1   
+        )
+        return redirect('gestionProducto',sesion)
+    except:
+        Producto.objects.create(
+            codigo = codigo1,       
+            nombre = nombre1,
+            marca = marca1,
+            valor = valor1,
+            id_tipo_producto = id_categoria2    
+        )
+        return redirect('gestionProducto',sesion)
+
+#-----------------------------------------------------------------------------
+
+def registrarTipoProducto(request,sesion):
+    desc1     = request.POST['desc']
+    id_cat    = request.POST['id_cat']
+    categoria = Categoria.objects.get(id_categoria = id_cat)
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+       
+    try:
+        imagen1          = request.FILES['imagen']
+        Categoria.objects.create(
+            descripcion=desc1,
+            id_categoria = categoria,
+            imagen = imagen1
+        )
+        return redirect('gestionTipoProducto',sesion)
+    except:
+        Categoria.objects.create(
+            descripcion=desc1,
+            id_categoria = categoria
+        )
+        return redirect('gestionTipoProducto',sesion)
+
+#-----------------------------------------------------------------------------
+
+def eliminarTipoProducto(request,sesion,id):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    tipoProducto = Categoria.objects.get(id_categoria = id)
+    tipoProducto.delete() #Elimina registro
+    return redirect('gestionTipoProducto',sesion)
+
+#-----------------------------------------------------------------------------
+
+def gestionStock(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    producto = Producto.objects.all()
+    categoria = Categoria.objects.all()
+    contexto = {
+        "sesion":sesion,
+        "usuario":x,
+        "Categoria":categoria
+    }
+    return render(request, 'core/gestiones/gestionStock.html',contexto)
+
+#-----------------------------------------------------------------------------
 
 
+#-----------------------FUNCIONES APARTE------------------------------------
+
+def fotoUsuarioModificada(request,sesion):
+    base64_string = sesion
+    base64_bytes = base64_string.encode("ascii")
+    sample_string_bytes = base64.b64decode(base64_bytes)
+    sample_string = sample_string_bytes.decode("ascii")
+    x = Usuario.objects.get(email = sample_string)
+    contexto = {
+        "sesion":sesion,
+        "usuario":x
+    }
+    
+    usuario = Usuario.objects.get(email = sample_string)
+    foto2 = request.FILES['fot']
+      
+    usuario.foto = foto2
+    usuario.save() #update
+    
+    return redirect ('modificarFotoPerfil',sesion)
+
+#-----------------------------------------------------------------------------
+
+def modificarContra(request,sesion,id):
+    password1  = request.POST['passw']
+    
+    usuario = Usuario.objects.get(id_user=id)
+    
+    usuario.password = password1
+    usuario.save() #update
+    return redirect('perfil',sesion)
+
+#-----------------------------------------------------------------------------
+
+def modificarUsuario(request,sesion,id):
+    # password1       = request.POST['passw']
+    nombre1         = request.POST['nom']
+
+    
+    usuario = Usuario.objects.get(id_user=id)
+    
+    usuario.nombre = nombre1
+
+    usuario.save() #update
+    return redirect('perfil',sesion)
+
+#-----------------------------------------------------------------------------
+
+def loginUsuario(request):
+    co = request.POST['corre']
+    ps = request.POST['pass']
+    
+    try:
+        user = Usuario.objects.get(email = co, password = ps)
+        sample_string = co
+        sample_string_bytes = sample_string.encode("ascii")
+        base64_bytes = base64.b64encode(sample_string_bytes)
+        base64_string = base64_bytes.decode("ascii")
+        sesion = base64_string
+
+   
+        return redirect ('home',sesion)
+ 
+    except Usuario.DoesNotExist:
+        return redirect ('login')
+
+#-----------------------------------------------------------------------------
+
+def registrarUsuario(request):
+    email1          = request.POST['correo']
+    password1       = request.POST['passw']
+    nombre1         = request.POST['nom']
+
+    try:
+        c = Usuario.objects.get(email = email1)
+        c1 = False
+    except Usuario.DoesNotExist:
+        c1 = True      
 
 
+    if c1 == True:
+      
+        Usuario.objects.create(
+            email = email1,
+            password = password1,
+            nombre = nombre1,)
+
+        #messages.success(request, 'Cuenta registrada')
+        return redirect('login')
+    else:
+        #messages.error(request, 'El nombre de usuario o correo ya estan ocupados')
+        return redirect('login')
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
+
+
+#-----------------------------------------------------------------------------
 
 
 
