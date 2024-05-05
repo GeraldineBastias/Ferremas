@@ -4,7 +4,7 @@ from django.db import models
 
 class Tipo_Usuario(models.Model):
     id_tipo_user = models.AutoField(primary_key=True)
-    nombre_Tipo = models.CharField(max_length=60, null=False, blank=False)
+    descripcion = models.CharField(max_length=60, null=False, blank=False)
 
     def __str__(self) :
             return self.descripcion

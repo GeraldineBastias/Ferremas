@@ -515,7 +515,7 @@ def loginUsuario(request):
         sesion = base64_string
 
    
-        return redirect ('home',sesion)
+        return redirect ('index',sesion)
  
     except Usuario.DoesNotExist:
         return redirect ('login')
@@ -539,7 +539,8 @@ def registrarUsuario(request):
         Usuario.objects.create(
             email = email1,
             password = password1,
-            nombre = nombre1,)
+            nombre = nombre1
+            )
 
         #messages.success(request, 'Cuenta registrada')
         return redirect('login')

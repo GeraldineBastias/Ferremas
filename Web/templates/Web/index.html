@@ -27,7 +27,7 @@
     <nav class="navbar navbar-expand-lg navbar-light shadow">
         <div class="container d-flex justify-content-between align-items-center">
 
-            <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'index' %}">
+            <a class="navbar-brand text-success logo h1 align-self-center" href="{% url 'index' sesion %}">
                 Ferremas
             </a>
 
@@ -39,16 +39,16 @@
                 <div class="flex-fill">
                     <ul class="nav navbar-nav d-flex justify-content-between mx-lg-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'index' %}">Inicio</a>
+                            <a class="nav-link" href="{% url 'index' sesion %}">Inicio</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'shop' %}">Tienda</a>
+                            <a class="nav-link" href="{% url 'shop' sesion%}">Tienda</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'about' %}">Sobre Nosotros</a>
+                            <a class="nav-link" href="{% url 'about' sesion %}">Sobre Nosotros</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'contact' %}">Contacto</a>
+                            <a class="nav-link" href="{% url 'contact' sesion%}">Contacto</a>
                         </li>
                     </ul>
                 </div>
